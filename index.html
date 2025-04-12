@@ -3,47 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My Website</title>
+    <title>Coming Soon</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('https://source.unsplash.com/1920x1080/?nature,landscape') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
             text-align: center;
-            background-color: #f4f4f9;
         }
-        header {
-            background-color: #6200ea;
-            color: white;
-            padding: 20px;
+        h1 {
+            font-size: 3rem;
+            margin: 0;
         }
-        main {
-            padding: 20px;
+        p {
+            font-size: 1.2rem;
+            margin: 10px 0;
         }
-        footer {
-            background-color: #6200ea;
-            color: white;
-            padding: 10px;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-        }
-        a {
-            color: #ffd700;
-            text-decoration: none;
+        .countdown {
+            font-size: 2rem;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Website</h1>
-    </header>
-    <main>
-        <p>Hello! This is your homepage. You can customize this text to say whatever you want!</p>
-        <p>Feel free to <a href="https://github.com/katiefurstoss" target="_blank">check out my GitHub</a>.</p>
-    </main>
-    <footer>
-        <p>&copy; 2025 My Website</p>
-    </footer>
+    <div>
+        <h1>Coming Soon</h1>
+        <p>Our website is under construction. Stay tuned for something amazing!</p>
+        <div class="countdown" id="countdown"></div>
+        <p>Thank you for your patience!</p>
+    </div>
+    <script>
+        // Countdown Timer
+        const targetDate = new Date('2025-05-01T00:00:00').getTime();
+        const countdownElement = document.getElementById('countdown');
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                countdownElement.innerHTML = "We're live!";
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+    </script>
 </body>
 </html>
