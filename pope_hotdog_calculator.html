@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pope Hotdog Consumption Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .calculator-section {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .calculator-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #555;
+            min-width: 120px;
+        }
+
+        .input-group input {
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            min-width: 100px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .result-text {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .pope-list-section {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .pope-list-title {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .ranking-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .ranking-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .ranking-subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .pope-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .pope-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 3px solid transparent;
+        }
+
+        .pope-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .pope-card.rank-1 {
+            border-color: #ffd700;
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.3);
+        }
+
+        .pope-card.rank-2 {
+            border-color: #c0c0c0;
+            box-shadow: 0 15px 35px rgba(192, 192, 192, 0.3);
+        }
+
+        .pope-card.rank-3 {
+            border-color: #cd7f32;
+            box-shadow: 0 15px 35px rgba(205, 127, 50, 0.3);
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .rank-badge.rank-1 {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+        }
+
+        .rank-badge.rank-2 {
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+            color: #333;
+        }
+
+        .rank-badge.rank-3 {
+            background: linear-gradient(135deg, #cd7f32, #daa520);
+            color: white;
+        }
+
+        .pope-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pope-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+
+        .pope-image .pope-emoji {
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .pope-card-content {
+            padding: 25px;
+        }
+
+        .pope-name {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .pope-origin {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .pope-reign {
+            text-align: center;
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .hotdog-stats {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .hotdog-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .hotdog-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .hotdog-range {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .hotdog-story {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: #555;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .consumption-rate {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .rate-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .rate-value {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .input-group label {
+                min-width: auto;
+            }
+            
+            .pope-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌭 Pope Hotdog Consumption Calculator</h1>
+            <p>Can Pope Francis catch up to Benedict XVI's legendary hotdog consumption?</p>
+        </div>
+
+        <div class="calculator-section">
+            <div class="calculator-card">
+                <h2 class="calculator-title">Francis vs Benedict XVI: The Great Hotdog Race</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">19,000</div>
+                        <div class="stat-label">Benedict XVI's Lifetime Hotdogs (Min)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">4,415</div>
+                        <div class="stat-label">Francis's Current Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">14,585</div>
+                        <div class="stat-label">Hotdogs Francis Needs</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Target Years:</label>
+                    <input type="number" id="targetYears" value="10" min="1" max="50" step="0.1">
+                </div>
+
+                <div class="input-group">
+                    <label>Hotdogs per Day:</label>
+                    <input type="number" id="hotdogsPerDay" value="4" min="1" max="20" step="0.1">
+                </div>
+
+                <div class="result-card" id="resultCard">
+                    <div class="result-number" id="resultNumber">4.0</div>
+                    <div class="result-text" id="resultText">hotdogs per day needed</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pope-list-section">
+            <h2 class="pope-list-title">🏆 Pope Hotdog Consumption Rankings</h2>
+            
+            <div class="ranking-header">
+                <div class="ranking-title">The Ultimate Sausage Champions</div>
+                <div class="ranking-subtitle">Ranked by lifetime hotdog consumption estimates</div>
+            </div>
+            
+            <input type="text" class="search-box" id="searchBox" placeholder="Search popes by name, origin, or reign period...">
+            
+            <div class="pope-cards-grid" id="popeList">
+                <!-- Pope cards will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pope data with qualitative information and emojis
+        const popeData = [
+            {
+                name: "Benedict XVI",
+                origin: "Germany",
+                reignStart: "2005-04-19",
+                reignEnd: "2013-02-28",
+                lifespan: 95.0,
+                hotdogsPerYear: 250,
+                lifetimeEst: 23750,
+                lifetimeLow: 19000,
+                lifetimeHigh: 28500,
+                emoji: "🥇",
+                story: "The undisputed hotdog champion! Born in Bavaria, Germany's sausage capital, where Bratwurst and Weisswurst are breakfast foods. Germans consume ~30kg of sausage annually per capita. Benedict's 250 hotdogs/year reflects Bavaria's sausage-centric culture, and his documented love of Bavarian foods and beer supports this estimate. Even as Pope, he likely maintained his German culinary preferences, making him the ultimate sausage connoisseur."
+            },
+            {
+                name: "Celestine III",
+                origin: "Italy",
+                reignStart: "1191-03-30",
+                reignEnd: "1198-01-08",
+                lifespan: 93.0,
+                hotdogsPerYear: 50,
+                lifetimeEst: 4650,
+                lifetimeLow: 3720,
+                lifetimeHigh: 5580,
+                emoji: "🥈",
+                story: "The medieval longevity champion! Living to 93 in the 12th century was extraordinary, giving him ample time to enjoy Italy's emerging sausage traditions. His 50 hotdogs/year reflects the medieval Italian diet where sausages were becoming more common among the elite. As Pope during the High Middle Ages, he likely enjoyed both traditional Roman sausages and emerging regional specialties from across Italy."
+            },
+            {
+                name: "Leo XIII",
+                origin: "Italy",
+                reignStart: "1878-02-20",
+                reignEnd: "1903-07-20",
+                lifespan: 93.3,
+                hotdogsPerYear: 60,
+                lifetimeEst: 5598,
+                lifetimeLow: 4478,
+                lifetimeHigh: 6718,
+                emoji: "🥉",
+                story: "The longest-reigning Pope (25 years) who lived through Italy's unification. His 60 hotdogs/year reflects traditional Italian sausage culture before industrialization. As Pope during Italy's transformation, he likely enjoyed both regional specialties and emerging national cuisine standards. His longevity and long reign gave him exceptional opportunities to sample Italy's diverse sausage traditions."
+            },
+            {
+                name: "John XXII",
+                origin: "France",
+                reignStart: "1316-08-07",
+                reignEnd: "1334-12-04",
+                lifespan: 90.9,
+                hotdogsPerYear: 50,
+                lifetimeEst: 4545,
+                lifetimeLow: 3636,
+                lifetimeHigh: 5454,
+                emoji: "👑",
+                story: "The Avignon Pope who created the position of papal mustard-maker for his nephew! This French Pope lived in extraordinary luxury during the 14th century, with contemporary accounts describing lavish banquets. His 50 hotdogs/year reflects the opulent French charcuterie tradition of the Avignon court, where sausages were just one component of elaborate meat feasts that could include entire 'castles' of game animals."
+            },
+            {
+                name: "Gregory XII",
+                origin: "Italy",
+                reignStart: "1406-11-30",
+                reignEnd: "1415-07-04",
+                lifespan: 88.5,
+                hotdogsPerYear: 50,
+                lifetimeEst: 4425,
+                lifetimeLow: 3540,
+                lifetimeHigh: 5310,
+                emoji: "🍖",
+                story: "Pope during the Great Schism, Gregory XII lived through turbulent times but still enjoyed Italy's rich culinary traditions. His 50 hotdogs/year reflects the late medieval Italian diet where sausages were becoming more sophisticated. Despite the political chaos of his era, he likely maintained access to quality Italian sausages through his connections across Italy."
+            },
+            {
+                name: "Francis",
+                origin: "Argentina",
+                reignStart: "2013-03-13",
+                reignEnd: "Present",
+                lifespan: 88.3,
+                hotdogsPerYear: 50,
+                lifetimeEst: 4415,
+                lifetimeLow: 3532,
+                lifetimeHigh: 5298,
+                emoji: "🌭",
+                story: "The current Pope from Argentina, where asado barbecues feature chorizo and morcilla. Francis grew up with Italian immigrant parents in Buenos Aires, likely enjoying both Argentine choripán and Italian-style sausages. His modest 50 hotdogs/year reflects his humble lifestyle, though Argentina's meat-loving culture (109kg/capita/year) suggests he could easily exceed this estimate if he indulged more."
+            },
+            {
+                name: "Clement XII",
+                origin: "Italy",
+                reignStart: "1730-07-12",
+                reignEnd: "1740-02-06",
+                lifespan: 87.8,
+                hotdogsPerYear: 50,
+                lifetimeEst: 4390,
+                lifetimeLow: 3512,
+                lifetimeHigh: 5268,
+                emoji: "🍽️",
+                story: "18th-century Pope who lived through the Baroque era of Italian cuisine. His 50 hotdogs/year reflects the refined Italian sausage traditions of the period, when charcuterie became more sophisticated. As Pope during the Enlightenment, he likely enjoyed both traditional regional sausages and emerging culinary innovations from across Italy."
+            },
+            {
+                name: "Clement X",
+                origin: "Italy",
+                reignStart: "1670-04-29",
+                reignEnd: "1676-07-22",
+                lifespan: 86.0,
+                hotdogsPerYear: 50,
+                lifetimeEst: 4300,
+                lifetimeLow: 3440,
+                lifetimeHigh: 5160,
+                emoji: "🎭",
+                story: "17th-century Pope during the Baroque period, when Italian cuisine reached new heights of sophistication. His 50 hotdogs/year reflects the refined sausage traditions of the era, when Italian charcuterie became more elaborate and regionally diverse. As Pope, he likely enjoyed the best sausages from across Italy's various regions."
+            },
+            {
+                name: "John Paul II",
+                origin: "Poland",
+                reignStart: "1978-10-16",
+                reignEnd: "2005-04-02",
+                lifespan: 84.8,
+                hotdogsPerYear: 80,
+                lifetimeEst: 6784,
+                lifetimeLow: 5427,
+                lifetimeHigh: 8141,
+                emoji: "🏃",
+                story: "The Polish Pope with a robust kiełbasa tradition. Poland's sausage culture includes grilled kielbasa, smoked sausages, and bacon consumed by 35% of adults several times weekly. John Paul II was athletic and health-conscious, but his documented love of Polish cuisine suggests he enjoyed traditional sausages. His 80 hotdogs/year reflects Poland's meat-heavy diet (60-80kg/capita/year) balanced with his active lifestyle."
+            },
+            {
+                name: "Pius XII",
+                origin: "Italy",
+                reignStart: "1939-03-02",
+                reignEnd: "1958-10-09",
+                lifespan: 82.6,
+                hotdogsPerYear: 80,
+                lifetimeEst: 6608,
+                lifetimeLow: 5286,
+                lifetimeHigh: 7930,
+                emoji: "⚔️",
+                story: "Pope during WWII, Pius XII maintained Vatican's traditional culinary standards despite wartime rationing. His 80 hotdogs/year reflects 20th-century Italian dietary habits, though wartime conditions may have temporarily reduced meat consumption. As Pope, he had access to Vatican's gardens and diplomatic food supplies, ensuring continued access to quality sausages even during difficult times."
+            }
+        ];
+
+        // Add more popes with their stories and emojis
+        const additionalPopes = [
+            {
+                name: "Pius IX",
+                origin: "Italy",
+                reignStart: "1846-06-16",
+                reignEnd: "1878-02-07",
+                lifespan: 85.7,
+                hotdogsPerYear: 60,
+                lifetimeEst: 5142,
+                lifetimeLow: 4113,
+                lifetimeHigh: 6170,
+                emoji: "🇮🇹",
+                story: "The longest-reigning Pope in history (31 years) who witnessed Italy's unification. His 60 hotdogs/year reflects traditional Italian sausage culture of the 19th century. As Pope during turbulent times, he likely found comfort in traditional Italian foods, including regional sausages from his native region. His long reign gave him exceptional opportunities to sample Italy's diverse sausage traditions."
+            },
+            {
+                name: "John XXIII",
+                origin: "Italy",
+                reignStart: "1958-10-28",
+                reignEnd: "1963-06-03",
+                lifespan: 81.5,
+                hotdogsPerYear: 80,
+                lifetimeEst: 6520,
+                lifetimeLow: 5216,
+                lifetimeHigh: 7824,
+                emoji: "😊",
+                story: "The 'Good Pope' who convened Vatican II. Born in 1881, he experienced both traditional Italian cuisine and modern food production. His 80 hotdogs/year reflects his era when Italian sausages became more standardized and accessible. Known for his jovial personality and love of good food, John XXIII likely enjoyed the rich Italian sausage tradition, including salsiccia and various regional specialties."
+            },
+            {
+                name: "Paul VI",
+                origin: "Italy",
+                reignStart: "1963-06-21",
+                reignEnd: "1978-08-06",
+                lifespan: 80.8,
+                hotdogsPerYear: 80,
+                lifetimeEst: 6464,
+                lifetimeLow: 5171,
+                lifetimeHigh: 7757,
+                emoji: "✈️",
+                story: "Born in Lombardy in 1897, Paul VI lived through Italy's transition to modern food production. His 80 hotdogs/year reflects 20th-century Italian dietary habits where cured sausages became more accessible. As Pope during Vatican II, he likely enjoyed both traditional Italian sausages and international cuisine at papal banquets. His long reign (15 years) gave him ample opportunity to sample various encased meats."
+            },
+            {
+                name: "John Paul I",
+                origin: "Italy",
+                reignStart: "1978-08-26",
+                reignEnd: "1978-09-28",
+                lifespan: 65.9,
+                hotdogsPerYear: 80,
+                lifetimeEst: 5272,
+                lifetimeLow: 4218,
+                lifetimeHigh: 6326,
+                emoji: "😇",
+                story: "The 'Smiling Pope' with the shortest reign (33 days). As a 20th-century Italian, he benefited from industrialized food production and Italy's omnivorous diet. His 80 hotdogs/year reflects the era when Italians regularly ate cured sausages and salami as part of antipasti. Despite his brief papacy, his Italian background and access to Vatican's excellent cuisine suggest he enjoyed quality sausages throughout his life."
+            },
+            {
+                name: "Pius XI",
+                origin: "Italy",
+                reignStart: "1922-02-06",
+                reignEnd: "1939-02-10",
+                lifespan: 81.6,
+                hotdogsPerYear: 60,
+                lifetimeEst: 4896,
+                lifetimeLow: 3917,
+                lifetimeHigh: 5875,
+                emoji: "🏛️",
+                story: "Born in 1857, Pius XI bridged traditional and modern Italian cuisine. His 60 hotdogs/year reflects the transition period when Italian sausage production was becoming more industrialized. As Pope during the interwar period, he likely enjoyed both traditional regional sausages and emerging standardized products. His long life (81.6 years) gave him experience with both old and new Italian culinary traditions."
+            },
+            {
+                name: "Benedict XV",
+                origin: "Italy",
+                reignStart: "1914-09-03",
+                reignEnd: "1922-01-22",
+                lifespan: 67.1,
+                hotdogsPerYear: 60,
+                lifetimeEst: 4026,
+                lifetimeLow: 3221,
+                lifetimeHigh: 4831,
+                emoji: "⚔️",
+                story: "Pope during WWI, Benedict XV faced wartime food shortages that likely affected his meat consumption. His 60 hotdogs/year reflects the challenging period when even papal tables had to adapt to rationing. Despite these constraints, his Italian background and Vatican's diplomatic connections ensured he still had access to quality sausages, though perhaps in reduced quantities compared to peacetime."
+            },
+            {
+                name: "Pius X",
+                origin: "Italy",
+                reignStart: "1903-08-04",
+                reignEnd: "1914-08-20",
+                lifespan: 79.2,
+                hotdogsPerYear: 60,
+                lifetimeEst: 4752,
+                lifetimeLow: 3802,
+                lifetimeHigh: 5703,
+                emoji: "⛪",
+                story: "The 'Pope of the Eucharist' who lived through Italy's industrial revolution. Born in 1835, he experienced the transition from traditional to modern Italian cuisine. His 60 hotdogs/year reflects the era when Italian sausage production was becoming more systematic. Known for his simple tastes, Pius X likely preferred traditional regional sausages over elaborate preparations, but still enjoyed Italy's rich sausage heritage."
+            },
+            {
+                name: "Gregory XVI",
+                origin: "Italy",
+                reignStart: "1831-02-02",
+                reignEnd: "1846-06-01",
+                lifespan: 80.7,
+                hotdogsPerYear: 50,
+                lifetimeEst: 4035,
+                lifetimeLow: 3228,
+                lifetimeHigh: 4842,
+                emoji: "📜",
+                story: "The last non-bishop to become Pope, Gregory XVI lived during Italy's pre-unification period. His 50 hotdogs/year reflects traditional Italian sausage consumption before modern food production. As Pope during political upheaval, he likely relied on traditional regional foods for comfort and familiarity, including the rich sausage traditions of his native region."
+            },
+            {
+                name: "Alexander VI",
+                origin: "Spain",
+                reignStart: "1492-08-11",
+                reignEnd: "1503-08-18",
+                lifespan: 72.6,
+                hotdogsPerYear: 50,
+                lifetimeEst: 3630,
+                lifetimeLow: 2904,
+                lifetimeHigh: 4356,
+                emoji: "🏰",
+                story: "The infamous Borgia Pope from Spain, known for lavish feasts and political intrigue. His 50 hotdogs/year reflects both Spanish sausage traditions (chorizo, morcilla) and Italian cuisine he encountered in Rome. As a member of the powerful Borgia family, he likely enjoyed both imported Spanish delicacies and the finest Italian sausages at his legendary banquets."
+            },
+            {
+                name: "Callistus III",
+                origin: "Spain",
+                reignStart: "1455-04-08",
+                reignEnd: "1458-08-06",
+                lifespan: 79.5,
+                hotdogsPerYear: 50,
+                lifetimeEst: 3975,
+                lifetimeLow: 3180,
+                lifetimeHigh: 4770,
+                emoji: "⚔️",
+                story: "Another Spanish Borgia Pope, uncle to Alexander VI. His 50 hotdogs/year reflects the Iberian sausage tradition he brought to Rome. As Pope during the Renaissance, he likely enjoyed both traditional Spanish sausages and the emerging Italian charcuterie traditions. His relatively long life (79.5 years) gave him ample time to appreciate both Spanish and Italian sausage cultures."
+            }
+        ];
+
+        // Combine all popes
+        const allPopes = [...popeData, ...additionalPopes];
+
+        // Calculator functionality
+        function updateCalculation() {
+            const targetYears = parseFloat(document.getElementById('targetYears').value);
+            const hotdogsPerDay = parseFloat(document.getElementById('hotdogsPerDay').value);
+            
+            const francisCurrent = 4415; // Francis's current total
+            const benedictMin = 19000; // Benedict XVI's minimum
+            const gap = benedictMin - francisCurrent; // 14585 hotdogs needed
+            
+            const totalHotdogsNeeded = gap;
+            const totalDays = targetYears * 365;
+            const requiredPerDay = totalHotdogsNeeded / totalDays;
+            
+            const resultNumber = document.getElementById('resultNumber');
+            const resultText = document.getElementById('resultText');
+            
+            if (hotdogsPerDay >= requiredPerDay) {
+                resultNumber.textContent = '✓ SUCCESS!';
+                resultText.textContent = `Francis can beat Benedict XVI by eating ${hotdogsPerDay} hotdogs/day for ${targetYears} years`;
+                document.getElementById('resultCard').style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+            } else {
+                resultNumber.textContent = requiredPerDay.toFixed(1);
+                resultText.textContent = `hotdogs per day needed (${hotdogsPerDay} is not enough)`;
+                document.getElementById('resultCard').style.background = 'linear-gradient(135deg, #4facfe, #00f2fe)';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('targetYears').addEventListener('input', updateCalculation);
+        document.getElementById('hotdogsPerDay').addEventListener('input', updateCalculation);
+
+        // Sort popes by lifetime hotdog consumption (descending)
+        function sortPopesByConsumption(popes) {
+            return popes.sort((a, b) => b.lifetimeEst - a.lifetimeEst);
+        }
+
+        // Get rank class for styling
+        function getRankClass(rank) {
+            if (rank === 1) return 'rank-1';
+            if (rank === 2) return 'rank-2';
+            if (rank === 3) return 'rank-3';
+            return '';
+        }
+
+        // Search functionality
+        function filterPopes() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const popeList = document.getElementById('popeList');
+            
+            let filteredPopes = allPopes.filter(pope => 
+                pope.name.toLowerCase().includes(searchTerm) ||
+                pope.origin.toLowerCase().includes(searchTerm) ||
+                pope.reignStart.includes(searchTerm) ||
+                pope.reignEnd.includes(searchTerm)
+            );
+            
+            // Sort by consumption and add ranking
+            filteredPopes = sortPopesByConsumption(filteredPopes);
+            
+            popeList.innerHTML = filteredPopes.map((pope, index) => {
+                const rank = index + 1;
+                const rankClass = getRankClass(rank);
+                
+                return `
+                    <div class="pope-card ${rankClass}">
+                        <div class="rank-badge ${rankClass}">${rank}</div>
+                        <div class="pope-image">
+                            <div class="pope-emoji">${pope.emoji || '👑'}</div>
+                        </div>
+                        <div class="pope-card-content">
+                            <div class="pope-name">${pope.name}</div>
+                            <div class="pope-origin">${pope.origin}</div>
+                            <div class="pope-reign">${pope.reignStart} - ${pope.reignEnd}</div>
+                            
+                            <div class="hotdog-stats">
+                                <div class="hotdog-number">${pope.lifetimeEst.toLocaleString()}</div>
+                                <div class="hotdog-label">Lifetime Hotdogs</div>
+                                <div class="hotdog-range">Range: ${pope.lifetimeLow.toLocaleString()} - ${pope.lifetimeHigh.toLocaleString()}</div>
+                            </div>
+                            
+                            <div class="consumption-rate">
+                                <span class="rate-label">Annual Rate:</span>
+                                <span class="rate-value">${pope.hotdogsPerYear} hotdogs/year</span>
+                            </div>
+                            
+                            <div class="consumption-rate">
+                                <span class="rate-label">Lifespan:</span>
+                                <span class="rate-value">${pope.lifespan} years</span>
+                            </div>
+                            
+                            <div class="hotdog-story">${pope.story}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('searchBox').addEventListener('input', filterPopes);
+
+        // Initialize
+        updateCalculation();
+        filterPopes();
+    </script>
+</body>
+</html>
